@@ -1,1 +1,79 @@
+; Charan Sankaran (clsankaran), Nilay Barde (nkbarde)
+; CS 1101 - Introduction to Program Design (A01)
+; Homework 0 - Intro to Racket and Composing Functions
 
+
+; Problem 1A:
+; (string-append (substring "CS110X" 0 5) (if (> 5 (+ 6 3)) "1" "2"))
+; (string-append ("CS110"               ) (if (> 5 (+ 6 3)) "1" "2"))
+; (string-append ("CS110"               ) (if (> 5 (9    )) "1" "2"))
+; (string-append ("CS110"               ) (if (false      ) "1" "2"))
+; (string-append ("CS110"               ) ("2"                     ))
+; "CS1102"
+
+(check-expect (string-append (substring "CS110X" 0 5) (if (> 5 (+ 6 3)) "1" "2")) "CS1102")
+
+; Problem 1B:
+; (define (triple n) (* n 3))
+; (if (and (< (triple 3) (+ 5 2)) true) (triple (+ 6 (- 19 4))) (* 7 (triple 5)))
+; (if (and (< (* 3 3   ) (+ 5 2)) true) (triple (+ 6 (- 19 4))) (* 7 (triple 5)))
+; (if (and (< (9       ) (+ 5 2)) true) (triple (+ 6 (- 19 4))) (* 7 (triple 5)))
+; (if (and (< (9       ) (7    )) true) (triple (+ 6 (- 19 4))) (* 7 (triple 5)))
+; (if (and (false               ) true) (triple (+ 6 (- 19 4))) (* 7 (triple 5)))
+; (if (false                          ) (triple (+ 6 (- 19 4))) (* 7 (triple 5)))
+; ((* 7 (triple 5)))
+; ((* 7 (* 5 3   )))
+; (* 7 (15      ))
+; 105
+
+(define (triple n) (* n 3))
+(check-expect (if (and (< (triple 3) (+ 5 2)) true) (triple (+ 6 (- 19 4))) (* 7 (triple 5))) 105)
+
+; Problem 2:
+
+(require 2htdp/image)
+;; four-square: Image -> Image
+;; Consumes an image and produces an image containing the image on top-left,
+;; the image flipped horizontally in the top-right, the image flipped vertically
+;; and then horizontally in the bottom-left, and the image flipped vertically in
+;; the bottom-right.
+(define (four-square img)
+  (above (beside img
+               (flip-horizontal img))
+       (beside (flip-horizontal (flip-vertical img))
+               (flip-vertical img))))
+(define image1 .)
+(four-square image1)
+(define image2 .)
+(four-square image2)
+
+; Problem 3A:
+
+(define tax-rate 1.0625)
+;; cost-after-taxes: Number -> Number
+;; Consumes in the cost of goods and produces the cost with the sales tax on it.
+(define (cost-after-taxes cost)
+  (* cost tax-rate))
+
+(check-expect (cost-after-taxes 100) 106.25)
+
+; Problem 3B:
+
+(define delivery-charge 80)
+;; cost-with-delivery: Number -> Number
+;; Consumes in the cost of goods and produces the cost with the sales tax on it
+;; plus the delivery fee.
+(define (cost-with-delivery cost)
+  (+ (cost-after-taxes cost) delivery-charge))
+
+(check-expect (cost-with-delivery 100) 186.25)
+
+; Problem 3C:
+
+;; cost-with-tax-delivery: Number -> Number
+;; Consumes in the cost of goods and produces the cost plus the delivery with
+;; the sales tax on both.
+(define (cost-with-tax-delivery cost)
+  (cost-after-taxes (+ cost 80)))
+
+(check-expect (cost-with-tax-delivery 100) 191.25)
