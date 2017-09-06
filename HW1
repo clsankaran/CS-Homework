@@ -1,0 +1,100 @@
+;; Nilay Barde nkbarde
+;; Charan Sankaran clsankaran
+
+;; Problem 1 and 2
+
+(define-struct date (year month day))
+;; a Date is a (make-date Natural Natural Natural)
+;; interpretation: represents a date where
+;; year is the year of the date
+;; month is the month of the date
+;; day is the day of the date
+
+(define D1 (make-date 2016 10 28))
+(define D2 (make-date 2000 7 4))
+(define D3 (make-date 2016 10 10))
+
+
+;; Signature for the constructor and the selectors for a film
+;; make-film: String String Natural Date Natural -> film
+;; film-title: String -> String
+;; film-genre: String -> String
+;; film-length: Natural -> Natural
+;; film-date: Date -> Date
+;; film-receipts: Natural -> Natural
+
+(define-struct film (title genre length date receipts))
+
+;; a Film is a (make-film String String Natural Date Natural)
+;; interpretation: represents a film where
+;; title is the title of the film
+;; genre is the genre of the film
+;; length is the length of the film in minutes
+;; the date is the year, month, and day the film opened at the theatre
+;; receipts is the total box office receipts collected in the film in millions of dollars
+
+(define F1 (make-film "Movie1" "Romantic" 83 D1 275))
+(define F2 (make-film "Movie2" "Comedy" 78 D2 185))
+(define F3 (make-film "Movie3" "Action" 92 D3 192))
+
+;; short-comedy?: Film -> Boolean
+;; consumes a film and produces true if it is shorter than 80 minutes and
+;; is a comedy
+
+(check-expect (short-comedy? F1)false)
+(check-expect (short-comedy? F2)true)
+(check-expect (short-comedy? (make-film "Movie4" "Comedy" 80 (make-date 2015 3 23) 100))true)
+
+;; Problem 3
+
+(define (short-comedy? a-film)
+  (if (and (<= (film-length a-film) 80)(string=? (film-genre a-film) "Comedy"))
+      true
+      false))
+
+;; Problem 4
+
+;; film-with-more-receipts Film Film -> Film
+;; consumes two films and produces the film that has more receipts
+;; if it has the same receipts, then it will produce either
+
+(check-expect (film-with-more-receipts F1 F2)F1)
+(check-expect (film-with-more-receipts F2 F3)F3)
+(check-expect (film-with-more-receipts F2 (make-film "Movie5" "Action" 90 (make-date 2014 8 5) 185))(make-film "Movie5" "Action" 90 (make-date 2014 8 5) 185))
+
+(define (film-with-more-receipts film1 film2)
+  (if(> (film-length film1) (film-length film2))
+     film1
+     film2))
+
+;; Problem 5
+
+;; add-time-for-trailers Film Natural -> Film
+;; consumes a film and a natural number for the number of trailers in the film and
+;; produces a film with an altered film length of an additional 3 minutes per trailer
+
+(check-expect (add-time-for-trailers F1 2)(make-film "Movie1" "Romantic" 89 D1 275))
+(check-expect (add-time-for-trailers F1 0)(make-film "Movie1" "Romantic" 83 D1 275))
+(check-expect (add-time-for-trailers (make-film "Movie6" "Romantic" 100 D2 350)3)(make-film "Movie6" "Romantic" 109 D2 350))
+
+
+(define (add-time-for-trailers t-film trailers-number)
+   (make-film (film-title t-film) (film-genre t-film) (+(* 3 trailers-number) (film-length t-film)) (film-date t-film) (film-receipts t-film)))
+
+;; Problem 6
+
+; opens-before?: Film Date -> Boolean
+; consumes a film and a date and produces true if the given film opens before the given date
+
+(check-expect (opens-before? F1 D2)false)
+(check-expect (opens-before? F3 D1)true)
+(check-expect (opens-before? F2 D2)false)
+
+(define (opens-before? o-film o-date)
+  (cond [(<(date-year(film-date o-film)) (date-year o-date)) true]
+        [(and (=(date-year(film-date o-film)) (date-year o-date)) (<(date-month(film-date o-film)) (date-month o-date))) true]
+        [(and (=(date-year(film-date o-film)) (date-year o-date)) (=(date-month(film-date o-film)) (date-month o-date))
+              (<(date-day(film-date o-film)) (date-day o-date))) true]      
+        [else false]))
+
+        
