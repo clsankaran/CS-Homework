@@ -1,0 +1,125 @@
+;;
+;; Nilay Barde
+;; nkbarde
+;; Lab 2 9/6/17
+;;
+
+(define-struct book(title author ISBN bound publisher year copies))
+;; a Book is a (make-book String String Natural Boolean String Natural Natural)
+;; interp. represents a book where
+;;  title is the title of the book
+;;  author is the author of the book
+;;  ISBN is the ISBN number of the book
+;;  bound is whether the book is a hard cover or a soft cover, where it is true if it is hard cover
+;;  publisher is the publisher of the book
+;;  year is the year published of the book
+;;  copies is the number of copies sold of the book
+
+(define B1 (make-book "The Life" "Nilay Barde" "9789295055025" true "Great Books" 2000 100000))
+
+;; Template
+
+;; book-fcn Book ->
+;;
+
+;(define (book-fcn a-book)
+;  (... (book-title a-book)
+;                             (book-author  a-book)
+;                             (book-ISBN  a-book)
+;                             (book-bound  a-book)
+;                             (book-publisher  a-book)
+;                             (book-year  a-book)
+;                             (book-copies  a-book)))
+
+
+(define-struct periodical (name volume issue))
+;; a Periodical is a (make-periodical String Natural Natural
+;; interp. represents a periodical where
+;;  name is the name of the periodical
+;;  volume is the volume number of the periodical
+;;  issue is the issue number of the periodical
+
+(define P1 (make-periodical "The Computer" 3 7))
+
+;; Template
+
+;; book-fcn Book ->
+;;
+
+;(define (periodical-fcn a-periodical)
+; (... (peridoical-name a-periodical)
+;      (periodical-volume a-periodical)
+;      (periodical-issue a-periodical)))
+
+
+
+
+(define-struct cd (title author narrator disks year length copies))
+;; a CD is a (make-cd String String String Natural Natural Natural Natural)
+;; interp. represents a cd where
+;;  title is the title of the cd
+;;  author is the author of the cd
+;;  narrator is the narrator of the cd
+;;  disks is the number of disks
+;;  year is the year the cd was published
+;;  length is the running time of the cd in minutes
+;;  copies is the number of copies sold
+
+(define C1 (make-cd "Tunes" "Nilay" "Morgan" 6 2002 47 145))
+
+;; Template
+
+;; cd-fcn CD ->
+;;
+
+;(define (cd-fcn a-cd)
+;  (... (cd-title a-cd)
+;       (cd-author a-cd)
+;       (cd-narrator a-cd)
+;       (cd-disks a-cd)
+;       (cd-year a-cd)
+;       (cd-length a-cd)
+;       (cd-copies a-cd)))
+
+
+
+;; A library is one of          an itemization
+;;   Book
+;;   Periodical
+;;   CD
+
+
+;; Template
+
+;; library-fcn: Library ->
+;;
+;(define (library-fcn a-lib)
+;  (cond [(book? a-lib) (... (book-title a-lib)
+;                            (book-author a-lib)
+;                            (book-ISBN a-lib)
+;                            (book-bound a-lib)
+;                            (book-publisher a-lib)
+;                            (book-year a-lib)
+;                            (book-copies a-lib))]
+;        [(periodical? a-lib) (... (peridoical-name a-lib)
+;                                  (periodical-volume a-lib)
+;                                  (periodical-issue a-lib))]
+;        [(cd? a-lib)(... (cd-title a-lib)
+;                         (cd-author a-lib)
+;                         (cd-narrator a-lib)
+;                         (cd-disks a-lib)
+;                         (cd-year a-lib)
+;                         (cd-length a-lib)
+;                         (cd-copies a-lib))]))
+
+
+
+;; Problem 4
+
+(check-expect (contributor? P1 "Nilay")false)
+(check-expect (contributor? B1 "Nilay Barde")true)
+(check-expect (contributor? C1 "David")false)
+
+
+
+ 
