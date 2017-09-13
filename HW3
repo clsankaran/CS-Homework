@@ -1,0 +1,76 @@
+;;
+;; Nilay Barde nkbarde
+;; Lab 3
+;; 9/13/17
+;;
+
+
+; Problem 1
+
+
+(define-struct ad (name duration cost air timeofday number))
+;; an Ad is a (make-Ad string Natural Natural Boolean String Natural
+;;  interp. a course where
+;;   name is the name of the ad
+;;   duration is how long the ad runs for in seconds
+;;   cost is how much it costs to produce the ad in thousands of dollars
+;;   air is whether or not the ad is aired nationally or locally
+;;   timeofday is the time of day the ad is being aired (daytime primetime or off-hour)
+;;   number is the number of times the ad is to be aired
+
+  (define A1 (make-ad "Advert1" 14 3 true "daytime" 7))
+  (define A2 (make-ad "Advert2" 29 7 false "primetime" 10))
+  (define A3 (make-ad "Advert3" 9 1 false "off-hour" 19))
+
+;; a TimeOfDay is a function that can only take in the strings:
+;; daytime
+;; primetime
+;; off-hour
+ 
+;; a ListOfAd is one of
+;;    empty
+;;   (cons Course ListOfCopies)
+
+(define LOA1 empty)
+(define LOA2 (cons A1 (cons A2 empty)))
+(define LOA3 (cons A1 (cons A2 (cons A3 empty))))
+
+
+; Problem 2
+
+
+; ;;fcn-for-ad:  Ad ->
+; ;;
+; (define (fcn-for-ad aad)
+;   (...(ad-name aad)
+;       (ad-duration aad)
+;       (ad-cost aad)
+;       (ad-air aad)
+;       (ad-timeofday aad)
+;       (ad-number aad)))
+
+
+; ;; fcn-for-lod:  ListOfAd -> 
+; ;;
+; (define (fcn-for-lod alod)
+;   (cond [(empty? alod)     ]
+;         [(cons? alod) (...(fcn-for-ad(first alod))
+;                           (fcn-for-lod (rest alod)))]))   
+
+
+
+;; fcn-for-lod:  ListOfAd -> Natural
+;;
+(define (count-long-primetime alod time)
+  (cond [(empty? alod)  0]
+        [(cons? alod) (if (string=? (ad-prime-duration(first alod) time)true)
+                          (+ 1 (count-long-primetime (rest alod) time))
+                          (count-long-primetime (rest alod) time))]))
+
+;;fcn-for-ad:  Ad ->
+;;
+(define (ad-prime-duration aad time)
+  (if(and(string=? (ad-timeofday aad) "primetime")(> (ad-duration aad) time))
+     true
+     false
+    ))
