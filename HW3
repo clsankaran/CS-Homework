@@ -1,76 +1,214 @@
-;;
-;; Nilay Barde nkbarde
-;; Lab 3
-;; 9/13/17
-;;
+; Charan Sankaran (clsankaran)
+; CS 1101 - Introduction to Program Design (AX09)
+; Lab 3 - Lists of Structs
 
 
 ; Problem 1
 
 
-(define-struct ad (name duration cost air timeofday number))
-;; an Ad is a (make-Ad string Natural Natural Boolean String Natural
-;;  interp. a course where
+(define-struct Ad (name duration cost air tod number))
+;; an Ad is a (make-Ad string Natural Natural Boolean String Natural)
+;; interp. an advertisement where
 ;;   name is the name of the ad
 ;;   duration is how long the ad runs for in seconds
 ;;   cost is how much it costs to produce the ad in thousands of dollars
 ;;   air is whether or not the ad is aired nationally or locally
-;;   timeofday is the time of day the ad is being aired (daytime primetime or off-hour)
+;;   tod is the time of day the ad is being aired (daytime primetime or off-hour)
 ;;   number is the number of times the ad is to be aired
 
-  (define A1 (make-ad "Advert1" 14 3 true "daytime" 7))
-  (define A2 (make-ad "Advert2" 29 7 false "primetime" 10))
-  (define A3 (make-ad "Advert3" 9 1 false "off-hour" 19))
+(define Ad1 (make-Ad "Adv1" 17 3 true "daytime" 7))
+(define Ad2 (make-Ad "Adv2" 25 7 true "primetime" 5))
+(define Ad3 (make-Ad "Adv3" 14 1 false "off-hour" 24))
 
-;; a TimeOfDay is a function that can only take in the strings:
-;; daytime
-;; primetime
-;; off-hour
+;; a tod is a function that can only take in the strings:
+;;    "daytime"
+;;    "primetime"
+;;    "off-hour"
  
 ;; a ListOfAd is one of
 ;;    empty
-;;   (cons Course ListOfCopies)
+;;    (cons Ad ListOfAds)
 
 (define LOA1 empty)
-(define LOA2 (cons A1 (cons A2 empty)))
-(define LOA3 (cons A1 (cons A2 (cons A3 empty))))
-
+(define LOA2 (cons Ad1 (cons Ad2 empty)))
+(define LOA3 (cons Ad1 (cons Ad2 (cons Ad3 empty))))
 
 ; Problem 2
 
 
-; ;;fcn-for-ad:  Ad ->
+; ;; fcn-for-ad: Ad ->
 ; ;;
-; (define (fcn-for-ad aad)
-;   (...(ad-name aad)
-;       (ad-duration aad)
-;       (ad-cost aad)
-;       (ad-air aad)
-;       (ad-timeofday aad)
-;       (ad-number aad)))
+; (define (fcn-for-ad aa)
+;   (...(Ad-name aa)
+;       (Ad-duration aa)
+;       (Ad-cost aa)
+;       (Ad-air aa)
+;       (Ad-tod aa)
+;       (Ad-number aa)))
 
-
-; ;; fcn-for-lod:  ListOfAd -> 
+; ;; fcn-for-loa: ListOfAd -> 
 ; ;;
-; (define (fcn-for-lod alod)
-;   (cond [(empty? alod)     ]
-;         [(cons? alod) (...(fcn-for-ad(first alod))
-;                           (fcn-for-lod (rest alod)))]))   
+; (define (fcn-for-loa aloa)
+;   (cond [(empty? aloa)     ]
+;         [(cons? aloa) (...(fcn-for-ad(first aloa))
+;                           (fcn-for-loa (rest aloa)))]))   
+
+; Problem 3
 
 
-
-;; fcn-for-lod:  ListOfAd -> Natural
-;;
-(define (count-long-primetime alod time)
-  (cond [(empty? alod)  0]
-        [(cons? alod) (if (string=? (ad-prime-duration(first alod) time)true)
-                          (+ 1 (count-long-primetime (rest alod) time))
-                          (count-long-primetime (rest alod) time))]))
-
-;;fcn-for-ad:  Ad ->
-;;
-(define (ad-prime-duration aad time)
-  (if(and(string=? (ad-timeofday aad) "primetime")(> (ad-duration aad) time))
+;; ad-prime-duration: Ad Natural -> Boolean
+;; Consumes an Ad and a duration and produces true if the ad is a primetime
+;; ad and is the ad's duration exceeds the duration given and false otherwise.
+(define (ad-prime-duration aa time)
+  (if (and (string=? (Ad-tod aa) "primetime")
+           (> (Ad-duration aa) time))
      true
      false
-    ))
+  ))
+
+(check-expect (ad-prime-duration Ad1 30) false)
+(check-expect (ad-prime-duration Ad2 10) true)
+(check-expect (ad-prime-duration Ad2 60) false)
+
+;; count-long-primetime:  ListOfAd Natural -> Natural
+;; Consumes a ListOfAds a duration and produces the number of primetime
+;; ads in the list whose duration exceeds that of the duration given
+(define (count-long-primetime aloa time)
+  (cond [(empty? aloa)  0]
+        [(cons? aloa) (if (ad-prime-duration (first aloa) time)
+                          (+ 1 (count-long-primetime (rest aloa) time))
+                          (count-long-primetime (rest aloa) time))]))
+
+(check-expect (count-long-primetime LOA1 30) 0)
+(check-expect (count-long-primetime LOA2 10) 1)
+(check-expect (count-long-primetime LOA3 60) 0)
+
+; Problem 4
+
+
+;; ad-has-tod: Ad String -> Boolean
+;; Consumes an Ad and a tod and produces true if the ad runs during
+;; that tod and false otherwise
+(define (ad-has-tod aa atod)
+  (if (string=? (Ad-tod aa) atod)
+     true
+     false
+  ))
+
+(check-expect (ad-has-tod Ad1 "off-hour") false)
+(check-expect (ad-has-tod Ad2 "primetime") true)
+(check-expect (ad-has-tod Ad3 "daytime") false)
+
+;; any-ads-in-timeslot?:  ListOfAd String -> Boolean
+;; Consumes a ListOfAds a duration and produces the number of primetime
+;; ads in the list whose duration exceeds that of the duration given
+(define (any-ads-in-timeslot? aloa atod)
+  (cond [(empty? aloa) false]
+        [(cons? aloa) (if (ad-has-tod (first aloa) atod)
+                       true
+                       (any-ads-in-timeslot? (rest aloa) atod))]))
+
+(check-expect (any-ads-in-timeslot? LOA1 "off-hour") false)
+(check-expect (any-ads-in-timeslot? LOA2 "primetime") true)
+(check-expect (any-ads-in-timeslot? LOA3 "daytime") true)
+
+; Problem 5
+
+
+;; national-ads: ListOfAds -> ListOfAds
+;; Consumes a ListOfAds and produces a ListOfAds containing the nationally aired ads.
+(define (national-ads aloa)
+  (cond [(empty? aloa) empty]
+        [(cons? aloa) (if (Ad-air (first aloa))
+                          (cons (first aloa) (national-ads (rest aloa)))
+                          (national-ads (rest aloa)))]))
+
+(check-expect (national-ads LOA1) empty)
+(check-expect (national-ads LOA2) (list Ad1 Ad2))
+(check-expect (national-ads LOA3) (list Ad1 Ad2))
+
+; Problem 6
+
+
+;; single-late-night: Ad -> Boolean
+;; Consumes an Ad and produces if the ad is advertised during off-hours.
+(define (single-late-night aa)
+  (if (string=? (Ad-tod aa) "off-hour")
+     true
+     false
+  ))
+
+;; late-night-products: ListOfAds -> ListOfStrings
+;; Consumes a ListOfAds and produces a ListOfStrings containing the names of
+;; the products advertised during off-hours.
+(define (late-night-products aloa)
+  (cond [(empty? aloa) empty]
+        [(cons? aloa) (if (single-late-night (first aloa))
+                          (cons (Ad-name (first aloa)) (late-night-products (rest aloa)))
+                          (late-night-products (rest aloa)))]))
+
+(check-expect (late-night-products LOA1) empty)
+(check-expect (late-night-products LOA2) empty)
+(check-expect (late-night-products LOA3) (list "Adv3"))
+
+; Problem 7
+
+
+(define AIR-SELL-TIME 30)
+(define NATIONAL-COST 100000)
+(define LOCAL-COST 5000)
+(define DAY-DISCOUNT 0.2)
+(define OFF-DISCOUNT 0.5)
+
+;; calc-cost: Ad Number Number -> Number
+;; Consumes an Ad the cost per 30 and the discount and produces the air cost of one airing of the Ad.
+(define (calc-cost aa cost-per-30 discount)
+  (* (/ (* (Ad-duration aa) cost-per-30) 30) (- 1 discount)))
+
+(check-expect (calc-cost Ad1 100000 0.2) 45333.3)
+(check-expect (calc-cost Ad2 100000 0) 83333.3)
+(check-expect (calc-cost Ad3 5000 0.5) 1166.6)
+
+;; air-cost-single: Ad -> Number
+;; Consumes an ad and produces the air cost of one airing of the Ad.
+(define (air-cost-single aa)
+  (if (Ad-air aa)
+      (cond [(string=? (Ad-tod aa) "daytime") (calc-cost aa NATIONAL-COST DAY-DISCOUNT)]
+            [(string=? (Ad-tod aa) "off-hour") (calc-cost aa NATIONAL-COST OFF-DISCOUNT)]
+            [else (calc-cost aa NATIONAL-COST 0)])
+      (cond [(string=? (Ad-tod aa) "daytime") (calc-cost aa LOCAL-COST DAY-DISCOUNT)]
+            [(string=? (Ad-tod aa) "off-hour") (calc-cost aa LOCAL-COST OFF-DISCOUNT)]
+            [else (calc-cost aa LOCAL-COST 0)])))
+
+(check-expect (air-cost-single Ad1) 45333.3)
+(check-expect (air-cost-single Ad2) 83333.3)
+(check-expect (air-cost-single Ad3) 1166.6)
+
+;; air-cost: Ad -> Number
+;; Consumes an ad and produces the air cost of the Ad.
+(define (air-cost aa)
+  (* (Ad-number aa) (air-cost-single aa)))
+
+(check-expect (air-cost Ad1) 317333.3)
+(check-expect (air-cost Ad2) 416666.6)
+(check-expect (air-cost Ad3) 28000)
+
+; Problem 8
+
+
+;; total-ad-cost: Ad -> Number
+;; Consumes an Ad and produces the total cost of the Ad.
+(define (total-ad-cost aa)
+  (+ (air-cost aa) (* 1000 (Ad-cost aa))))
+
+; Problem 9
+
+
+;; expensive-ads: ListOfAd Number -> ListOfAds
+;; Consumes a ListOfAds and a cost and produces a list of Ads
+;; where the total cost of the Ad is greater than the inputted cost.
+(define (expensive-ads aloa cost)
+  (cond [(empty? aloa) empty]
+        [(cons? aloa) (if (> (total-ad-cost (first aloa)) cost)
+                          (cons (first aloa) (expensive-ads (rest aloa) cost))
+                          (expensive-ads (rest aloa) cost))]))
