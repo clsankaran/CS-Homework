@@ -1,0 +1,107 @@
+;;
+;; Nilay Barde
+;; Lab 4
+;; 9/20/17
+;;
+
+; Problem 1
+
+
+(define-struct contact (name address email))
+;; a Contact is a (make-contact String String String)
+;; interp. represents a contact where
+;;  name is the name of the customer
+;;  address is the customer's address
+;;  email is the email address of the customer
+
+(define-struct charge (name amount))
+;; a Charge is a (make-charge String String Natural)
+;; interp. represents a charge where
+;;  name is the name of the business the credit card was used
+;;  amount is the amount that was charged
+
+;; A ListOfCharge is one of
+;;  empty
+;;  (cons charge ListOfCharge)
+
+(define Co1 (make-contact "Nilay Barde" "100 Institute Road" "nkbarde@wpi.edu"))
+(define Co2 (make-contact "Charan Sankaran" "100 Institute Road" "clsankaran@wpi.edu"))
+(define Ch1 (make-charge "Google" 8000))
+(define Ch2 (make-charge "Apple" 25000))
+(define loc1 (list Ch1 Ch2))
+
+; Problem 2
+
+
+; ; fcn-for-contact: Contact ->
+; ; 
+; ; (define (fcn-for-contact acontact)
+; ;   (...(contact-name acontact)
+; ;       (contact-address acontact)
+; ;       (contact-email acontact)))
+; 
+; 
+; ;  fcn-for-charge: Charge ->
+; ; 
+; ; (define (fcn-for-charge acharge)
+; ;   (...(charge-name acharge)
+; ;       (charge-amount acharge)))
+; 
+; 
+; ;  loc-fcn:  ListOfCharge ->
+; ; 
+; ; (define (loc-fcn aloc)
+; ;   (cond [(empty? aloc)   (...)            ]
+; ;         [(cons? aloc)    (fcn-for-charge (first aloc)
+; ;                               (loc-fcn (rest aloc)))]))
+; 
+; 
+
+; Problem 3
+
+
+;; a BST is one of
+;;   false
+;;   CustNode
+;; interp. false means no BST, or empty BST
+;; a CustNode is a (make-customer Natural Contact Number ListOfCharge BST BST)
+;;         card-number is the node key
+;;         contact is the contact of the CustNode
+;;         limit is the customer's limit
+;;         charges is a list of charges
+;;         left and right are left and right subtrees
+;; INVARIANT: for a given node:
+;;      card-number is > for all card-numbers in its left child
+;;      card-number is < for all card-numbers in its right child
+;;
+(define-struct customer (card-number contact limit charges left right))
+
+; Problem 4
+
+
+(define BST1 (make-customer 100 Co1 25 loc1
+                            (make-customer 48 Co1 25 loc1
+                                            false
+                                           (make-customer 75 Co1 15 loc1 false false))
+                            (make-customer 150 Co2 8 loc1
+                                            (make-customer 102 Co1 25 loc1 false false)
+                                            (make-customer 165 Co2 12 loc1 false false))
+                            ))
+
+; Problem 5
+
+
+
+(define (fcn-for-custnode acustnode)
+  (cond
+    [(boolean? acustnode) ...]
+    [(customer? acustnode) (... (customer-card-number acust)
+                                (customer-contact acust)
+                                (customer-limit acust)
+                                (customer-charges acust)
+                                (fcn-for-custnode(customer-left acust))
+                                (fcn-for-custnode(customer-right acust))
+                                )
+                           ]))
+                                (
+                            
