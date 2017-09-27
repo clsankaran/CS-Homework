@@ -1,0 +1,90 @@
+;;
+;; Lab 4
+;; Nilay Barde
+;; 9/27/17
+;;
+
+; Problem 1
+
+
+(define-struct river (name pH do tributaries))
+;; a River is a (make-river name pH DO tributaries)
+;;  interp. is a river where
+;;   name is the name of the river
+;;   pH is the pH level in the range from 0 to 14
+;;   DO is the dissolved oxygen and they typically range from less than 1 mg/L to more than 20 mg/L
+;;   tributaries is a list of rivers that feed into the river
+
+; Problem 2
+
+
+(define R1 (make-river "Nilay" 6 6
+                       (list
+                        (make-river "Charan" 12 8
+                                   (list
+                                   (make-river "Adam" 10 7 empty)
+                                   (make-river "John" 2 6 empty)))
+                       (make-river "Peter" 4 5 empty))))
+(define R2 (make-river "Nilay" 8 6
+                       (list
+                        (make-river "Charan" 12 8
+                                   (list
+                                   (make-river "Adam" 10 7 empty)
+                                   (make-river "John" 8 6 empty)))
+                       (make-river "Peter" 8 5 empty))))
+(define R3 (make-river "Nilay" 7 6
+                       (list
+                        (make-river "Charan" 7 8
+                                   (list
+                                   (make-river "Adam" 7 7 empty)
+                                   (make-river "John" 7 7 empty)))
+                       (make-river "Peter" 7 5 empty))))
+(define R4 (make-river "Nilay" 9 6
+                       (list
+                        (make-river "Charan" 9 8
+                                   (list
+                                   (make-river "Adam" 7 7 empty)
+                                   (make-river "John" 7 7 empty)))
+                       (make-river "Peter" 9 5 empty))))
+
+; Problem 3
+
+
+;; a ListofRiver is one of
+;;   empty
+;;   (cons river ListOfRiver)
+
+;;; river-fcn:  River ->
+;;;
+;(define (river-fcn ariv)
+;  (... (river-name ariv)
+;       (river-pH ariv)
+;       (river-do ariv)
+;       (lor-fcn (river-tributaries ariv))))
+;
+;;; lor-fcn:  ListOfRiver ->
+;;;
+;(define (lor-fcn alor)
+;  (cond [(empty? alor) (...)]
+;        [(cons? alor)  (...(river-fcn (first alor))
+;                           (lor-fcn (rest alor)))]))
+
+
+;; river-fcn:  River -> Natural
+
+                            
+
+; Problem 4
+
+
+(check-expect (more-acidic-than R1 6) 2)
+(check-expect (more-acidic-than R1 4) 0)
+(check-expect (more-acidic-than empty 1) 0)
+              
+; Problem 5
+
+
+(check-expect (rivers-at-risk R1) (list "Nilay" "Charan" "Adam" "John" "Peter"))
+(check-expect (rivers-at-risk R2) empty)
+(check-expect (rivers-at-risk R3) (list "Nilay" "Peter"))
+(check-expect (rivers-at-risk R4) (list "Nilay" "Charan" "Peter"))
