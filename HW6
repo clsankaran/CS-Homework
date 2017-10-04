@@ -1,0 +1,99 @@
+;; a TimeOfDay is one of
+;;   "daytime"
+;;   "primetime"
+;;   "off-hour"
+
+
+(define-struct ad (name duration production-cost national? time-of-day repetitions))
+;; an Ad is a (make-ad String Natural Number Boolean TimeOfDay Natural)
+;; interp:  a television ad, where
+;;          name is the name of the product the ad is for
+;;          duration is the length of the ad (in seconds)
+;;          production-cost is the cost to produce the ad (in thousands of dollars)
+;;          national? is true if the ad is to be aired nationally (false if locally)
+;;          time-of-day is the time of day that the ad airs
+;;          repetitions is the number of times the ad is to be played
+
+;; a ListOfAd is one of
+;;   empty
+;;   (cons Ad ListOfAd)
+
+;; Problem 1
+
+;; ListOfAd Natural -> Natural
+;; consumes a list of ads and a length of time and
+;; produces the number of ads in the list that air in runtime
+;; and that run for more than the given number of seconds
+(define (count-long-primetime aloa limit)
+  (local
+    [(define (is-long-single aad)
+           (and(> (ad-duration aad) limit)
+               (string=? (ad-time-of-day aad) "primetime")))]
+  (length (filter is-long-single aloa))
+    )
+  )
+
+  
+(define ad1 (make-ad "Adv1" 17 3 true "daytime" 7))
+(define ad2 (make-ad "Adv2" 25 7 true "primetime" 5))
+(define ad3 (make-ad "Adv3" 14 1 false "off-hour" 24))
+
+(define LOA1 empty)
+(define LOA2 (cons ad1 (cons ad2 empty)))
+(define LOA3 (cons ad1 (cons ad2 (cons ad3 empty))))
+
+(check-expect (count-long-primetime LOA1 30) 0)
+(check-expect (count-long-primetime LOA2 10) 1)
+(check-expect (count-long-primetime LOA3 60) 0)
+
+
+;; Problem 2
+
+;; national-ads: ListOfAd -> ListOfAd
+;; consumes a list of ads and produces a list of ads that are aired nationally
+
+(define (national-ads aloa)
+  (filter ad-national? aloa))
+
+(check-expect (national-ads LOA1) empty)
+(check-expect (national-ads LOA2) (list ad1 ad2))
+(check-expect (national-ads LOA3) (list ad1 ad2))
+
+;; Problem 3
+
+;; late-night-products: ListOfAd -> ListOfString
+;; consumes a list of ads and produces a list of strings of the names of the ads advertised during off hours
+
+(define (late-night-products aloa)
+  (map ad-name (filter single-late-night aloa)))
+
+;; single-late-night: Ad -> Boolean
+;; consumes and ad and produces true if it is aired during "off-hour"
+(define (single-late-night aad)
+  (string=? (ad-time-of-day aad) "off-hour"))
+
+(check-expect (late-night-products LOA1) empty)
+(check-expect (late-night-products LOA2) empty)
+(check-expect (late-night-products LOA3) (list "Adv3"))
+
+;; Problem 4
+
+;; adjust-for-inflation: ListOfAd -> ListOfAd
+;; consumes a list of ads and produces the same list with each production cost for each ad in the list
+;; is increased by 1%
+
+(define (adjust-for-inflation aloa)
+  (map single-ad-change aloa))
+
+;; single-ad-change: ad -> ad
+;; consumes an ad and produces the same ad with a 1% increase in the production cost
+(define (single-ad-change aad)
+  (make-ad (ad-name aad)
+           (ad-duration aad)
+           (* 1.01 (ad-production-cost aad))
+           (ad-national? aad)
+           (ad-time-of-day aad)
+           (ad-repetitions aad)))
+
+(check-expect (adjust-for-inflation LOA2) (list (make-ad "Adv1" 17 (* 1.01 3) true "daytime" 7) (make-ad "Adv2" 25 (* 1.01 7) true "primetime" 5)))
+(check-expect (adjust-for-inflation LOA3) (list (make-ad "Adv1" 17 (* 1.01 3) true "daytime" 7) (make-ad "Adv2" 25 (* 1.01 7) true "primetime" 5) (make-ad "Adv3" 14 (* 1.01 1) false "off-hour" 24)))
