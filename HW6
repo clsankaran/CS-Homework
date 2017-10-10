@@ -1,3 +1,5 @@
+
+
 ;; a TimeOfDay is one of
 ;;   "daytime"
 ;;   "primetime"
@@ -101,7 +103,17 @@
 ;; Problem 5
 
 (define-struct user (name messages))
-(define-struct message (user text flag))
+;; a User is a (make-user name messages)
+;; interp: represents a user with
+;;    a name which is the username and 
+;;    messages which is the collection of messages in the inbox
+
+(define-struct message (sender text flag))
+;; a Message is a (make-message user text flag)
+;; interp: represents a message with
+;;    sender which is the sender of the message
+;;    text which is the text of the message
+;;    flag which is a boolean of whether the message has been read or not
 
 (define mailsys empty)
 
@@ -110,7 +122,7 @@
 (define (add-user aname)
   (set! mailsys (cons (make-user aname empty) mailsys)))
 
-; Problem 7
+;; Problem 7
 
 (define (send-email asndr arcpt amsg)
   (set-user-messages! (find-user mailsys arcpt) (make-message asndr amsg false)))
@@ -122,8 +134,20 @@
                           (find-user (rest alou) aname))]))
 
 mailsys
+(add-user "nilay")
+(add-user "charan")
 (send-email "nilay" "charan" "hello")
 mailsys
+
+
+;; Problem 8
+
+(define (get-unread-messages-and-mark-read usrnam)
+  (set-message-flag!(user-messages (find-user mailsys usrnam)) true))
+
+
+                            
+         
 
                            
   
