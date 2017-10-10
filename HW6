@@ -110,13 +110,20 @@
 (define (add-user aname)
   (set! mailsys (cons (make-user aname empty) mailsys)))
 
-;; Problem 7
+; Problem 7
 
-(define (send-email asend arec atext)
-  (set-user-messages!(cons (make-message asend atext false))))
+(define (send-email asndr arcpt amsg)
+  (set-user-messages! (find-user mailsys arcpt) (make-message asndr amsg false)))
 
-(define (name-to-user anam alou)
-  (
+(define (find-user alou aname)
+  (cond [(empty? alou) (error "No user found!")]
+        [(cons? alou) (if (string=? aname (user-name (first alou)))
+                          (first alou)
+                          (find-user (rest alou) aname))]))
+
+mailsys
+(send-email "nilay" "charan" "hello")
+mailsys
 
                            
   
