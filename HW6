@@ -97,3 +97,26 @@
 
 (check-expect (adjust-for-inflation LOA2) (list (make-ad "Adv1" 17 (* 1.01 3) true "daytime" 7) (make-ad "Adv2" 25 (* 1.01 7) true "primetime" 5)))
 (check-expect (adjust-for-inflation LOA3) (list (make-ad "Adv1" 17 (* 1.01 3) true "daytime" 7) (make-ad "Adv2" 25 (* 1.01 7) true "primetime" 5) (make-ad "Adv3" 14 (* 1.01 1) false "off-hour" 24)))
+
+;; Problem 5
+
+(define-struct user (name messages))
+(define-struct message (user text flag))
+
+(define mailsys empty)
+
+;; Problem 6
+
+(define (add-user aname)
+  (set! mailsys (cons (make-user aname empty) mailsys)))
+
+;; Problem 7
+
+(define (send-email asend arec atext)
+  (set-user-messages!(cons (make-message asend atext false))))
+
+(define (name-to-user anam alou)
+  (
+
+                           
+  
